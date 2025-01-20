@@ -12,3 +12,10 @@ app.include_router(user.router)
 @app.get('/')
 async def welcome() -> dict:
     return {'message': 'Welcome to Taskmanager'}
+
+#Для тестирования - Распечатываем SQL запрос
+from sqlalchemy.schema import CreateTable
+from models import *
+
+print(CreateTable(User.__table__))
+print(CreateTable(Task.__table__))
