@@ -1,6 +1,6 @@
 from fastapi import FastAPI
-from routers import task
-from routers import user
+from app.routers import task
+from app.routers import user
 
 
 app = FastAPI()
@@ -15,7 +15,7 @@ async def welcome() -> dict:
 
 #Для тестирования - Распечатываем SQL запрос
 from sqlalchemy.schema import CreateTable
-from models import *
+from app.models import *
 
 print(CreateTable(User.__table__))
 print(CreateTable(Task.__table__))

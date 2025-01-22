@@ -2,15 +2,14 @@ from pydantic import BaseModel
 from pydantic import Field
 
 
-class CreateUser(BaseModel):
-    username: str = Field(default='ivan')
+class UpdateUser(BaseModel):
     firstname:str = Field(default='Ivan')
     lastname: str = Field(default='Ivanov')
     age: int = Field(default=25)
 
 
-class UpdateUser(CreateUser):
-    pass
+class CreateUser(UpdateUser):
+    username: str = Field(default='ivan')
 
 
 class CreateTask(BaseModel):
