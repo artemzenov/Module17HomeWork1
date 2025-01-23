@@ -11,6 +11,7 @@ from typing import Annotated
 from slugify import slugify
 from app.backend.db_depends import get_db
 from app.models import User
+from app.models import Task
 from app.schemas import CreateUser
 from app.schemas import UpdateUser
 
@@ -77,6 +78,7 @@ async def update_user(db: Annotated[Session, Depends(get_db)],
 async def delete_user(db: Annotated[Session, Depends(get_db)],
                       user_id: int):
     if db.scalar(select(User).where(User.id == user_id)):
+        db.execute(delete(Task).where(Task.user_id == user_id))
         db.execute(delete(User).where(User.id == user_id))
         db.commit()
         return {
@@ -88,3 +90,23 @@ async def delete_user(db: Annotated[Session, Depends(get_db)],
             status_code=status.HTTP_404_NOT_FOUND,
             detail='User was not found'
         )
+
+
+@router.get('/user_id/tasks')
+async def tasks_by_user_id(db: Annotated[Session, Depends(get_db)],
+                           user_id: int):
+    user = db.scalar(select(User).where(User.id == user_id))
+    if user:
+        tasks = db.scalars(select(Task).where(Task.user_id == user_id)).all()
+        if tasks:
+            return tasks
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail='Task was not found'
+                )
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail='User was not found'
+            )
